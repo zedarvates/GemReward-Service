@@ -35,6 +35,12 @@ async def root():
         "documentation": "/docs"
     }
 
+# Inclusion des routeurs
+from app.api.webhooks import router as webhooks_router
+
+app.include_router(webhooks_router, prefix="/v1/webhooks", tags=["Webhooks"])
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
