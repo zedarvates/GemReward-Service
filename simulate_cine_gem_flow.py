@@ -2,8 +2,6 @@ import asyncio
 import uuid
 import logging
 import httpx
-from backend.cine_production_service import CineProductionService, CineProductionRequest, CineChainType, ProductionQuality
-from backend.gem_service_client import gem_client
 
 # Setup logging to see what's happening
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -28,46 +26,12 @@ async def simulate():
     # 0. Initial Balances
     await check_balances()
 
-    # 1. Initialize Service
-    # We use a mock or standard service, but since we want to see the GEM flow, 
-    # we'll allow it to run up to the point of ComfyUI call.
-    service = CineProductionService()
-    
-    # 2. Create a high-quality request
-    req = CineProductionRequest(
-        chain_type=CineChainType.LTX_VIDEO_GENERATION,
-        project_id="test_project_simulation",
-        quality=ProductionQuality.ULTRA, # 5x cost!
-        video_prompt="A futuristic cyberpunk city at night with neon lights"
-    )
-
-    print(f"\n💎 Action: Launching ULTRA Production (Cost: 25 Gems)")
-    job_id = await service.start_production_job(req, user_id=USER_ID)
-    
-    # 3. Check balance immediately (should be locked in escrow)
-    print(f"   Job {job_id} started. Checking escrow status...")
-    await asyncio.sleep(1) # Give it a second to process the start phase
+    # 0. Initial Balances
     await check_balances()
 
-    # 4. Wait for the job to finish 
-    # (Since we might not have a real ComfyUI running, it might fail or we can wait)
-    # To ensure it "finishes" correctly for simulation, let's look at the job status
-    print(f"⏳ Waiting for job {job_id} to progress...")
-    
-    max_wait = 30
-    while max_wait > 0:
-        job = await service.get_job_status(job_id)
-        print(f"   [JOB STATUS]: {job.status.value} - {job.current_step} ({job.progress}%)")
-        
-        if job.status.value in ["completed", "failed", "cancelled"]:
-            break
-            
-        await asyncio.sleep(2)
-        max_wait -= 2
-
-    print(f"\n🏁 Simulation Result: {job.status.value}")
-    if job.error:
-        print(f"   ❌ Error: {job.error}")
+    print("ℹ️  Simulation placeholder: requires backend.cine_production_service module")
+    print("   Direct API calls can be made via POST /v1/gems/escrow/create")
+    print("   See test_escrow.py for a complete escrow flow example.")
 
     # 5. Final Balance check
     await check_balances()

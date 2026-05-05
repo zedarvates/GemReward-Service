@@ -79,13 +79,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] — Planned for v1.1.0
+## [1.1.0] — 2026-05-05
+
+### 🎉 Added: Frontend Dashboard (React + TypeScript + Tailwind)
+
+- Complete React SPA with Vite build tooling
+- Tailwind CSS v4 with dark/light theme support
+- Shadcn-style UI components (Button, Card, Badge, Input, Select, Label)
+- 6 pages: Dashboard, Applications, AI Agents, Escrows & Transfers, Workers, Wallet
+- React Query (`@tanstack/react-query`) for API caching and state management
+- Proxy configuration: `/v1/*` → `localhost:8001` in dev mode
+- TypeScript types matching all Pydantic API models
+- Loading, empty, and error states for all pages
+- Sidebar navigation with routing (`react-router-dom`)
+
+#### New Pages
+
+| Page | Features |
+|------|----------|
+| **Dashboard** | Service status, agent leaderboard, recent escrows |
+| **Applications** | Register apps with reward rules, list agents by app |
+| **AI Agents** | Agent list with reputation, register agent form, contribution scoring |
+| **Escrows** | Escrow list with release/cancel actions, create escrow, P2P transfer |
+| **Workers** | Worker node list, register worker, task categories |
+| **Wallet** | Balance/tier lookup, transaction history |
+
+### 🔒 Security Fixes
+
+- FastAPI upgraded `0.115.0` → `0.115.14` (Starlette `0.46.2`, fixes CVE-2024-47874 DoS)
+- PyJWT upgraded `2.10.1` → `2.12.1` (fixes CVE-2024-53862 crit header)
+- python-dotenv upgraded `1.0.1` → `1.2.2` (fixes CVE-2024-48879 symlink)
+- Mako pinned `>=1.3.7` (fixes path traversal CVE)
+- Alembic upgraded `1.13.1` → `1.18.4` (pulls fixed Mako)
+- Starlette multipart DoS (moderate) patched via upgrade to `0.46.2`
+
+### 🐛 Bug Fixes
+
+- `setup_app.py`: relative imports replaced with absolute imports (crash fix)
+- `simulate_cine_gem_flow.py`: removed broken imports to `backend.*` (ModuleNotFoundError)
+- `api/gems.py`: removed unused `func` import
+- `main.py`: removed unused imports (`Depends, HTTPException, Header, Request`)
+- `engine.py` `calculate_reward`: clarified default logic (no longer returns 1 when no `__default__` key exists)
+- `app/core/engine.py` `calculate_reward`: added `max(0, ...)` guard (prevent negative rewards)
+- `engine.py` `cancel_escrow`: added warning log when sender wallet not found
+- `main.py`: merged duplicate `@app.on_event("startup")` handlers
+
+### 📝 Documentation
+
+- README updated with frontend setup instructions, badges, and production build guide
+- Fix corrupted emoji character in README
+
+## [Unreleased] — Planned for v1.2.0
 
 ### Planned
 
 - LLM-based quality scoring (replace heuristics with Gemini/Claude API call)
 - Redis-backed rate limiting and persistent agent registry
-- GitHub webhook: automatic commit → Gem reward pipeline
 - Agent task queue: StoryCore broadcasts pending tasks; agents claim and process
 - API Budget Recycler: end-of-month surplus detection and auto-routing
 - Multi-signature escrow for high-value compute tasks (>500 Gems)

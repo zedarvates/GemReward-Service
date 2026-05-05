@@ -7,8 +7,11 @@ Helper script to register apps and seed default reward rules.
 import asyncio
 import uuid
 import secrets
-from .models import AppRegistration, AppRewardRule
-from .db.session import AsyncSessionLocal
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+from models import AppRegistration, AppRewardRule
+from db.session import AsyncSessionLocal
 
 async def register_new_app(name: str, webhook_secret: str = None):
     """Registers a new client application and returns its credentials."""

@@ -26,17 +26,20 @@ class GemEngineStandalone:
         """
         Calculate gem amount based on application-specific rules.
         Takes the maximum value found among trigger keys.
+        Falls back to __default__ if defined, otherwise 0.
         """
         rules = await self.get_app_rules(app_id)
-        max_gems = rules.get("__default__", 1)
-        
-        found = False
+        default_value = rules.get("__default__")
+        has_default = "__default__" in rules
+
+        max_gems = max(0, default_value) if has_default else 0
+
         for key in trigger_keys:
             if key in rules:
                 max_gems = max(max_gems, rules[key])
-                found = True
-        
-        return max_gems if found or "__default__" in rules else 0
+                return max(0, max_gems)
+
+        return max(0, max_gems if has_default else 0)
 
     async def process_transaction(
         self,

@@ -1,9 +1,11 @@
 # 💎 StoryCore Gem Protocol: The Currency of Applied Effort
 
-![Release](https://img.shields.io/badge/release-v1.0.0-brightgreen)
+![Release](https://img.shields.io/badge/release-v1.1.0-brightgreen)
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688)
+![React](https://img.shields.io/badge/React-19%2B-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5%2B-3178C6)
 
 > "Tokens are not just credits; they are the quantification of Time, Energy, and specialized Intellect."
 
@@ -185,38 +187,67 @@ This mirrors how energy grids manage peak load through reserves and arbitrage, a
 
 ---
 
-## �🚀 Getting Started (Developer MVP)
+## 🚀 Getting Started (Developer MVP)
 
 ### Prerequisites
 
 * Python 3.10+
-* SQLAlchemy / FastAPI
+* Node.js 20+
 * A vision for a decentralized future
 
-### Setup
+### Backend Setup
 
 1. Clone the service.
-2. Run the standalone microservice:
+2. Install Python dependencies:
 
    ```bash
-   python -m uvicorn main:app --port 8001
+   pip install -r requirements.txt
    ```
 
-3. **Initialisation des Catégories** :
+3. Run the standalone microservice:
+
+   ```bash
+   uvicorn main:app --port 8001 --reload
+   ```
+
+4. Seed default task categories:
 
    ```bash
    curl -X POST http://localhost:8001/v1/gems/tasks/seed
    ```
 
-4. Connectez votre station de travail pour commencer à quantifier l'énergie de votre GPU.
+5. API documentation available at [http://localhost:8001/docs](http://localhost:8001/docs)
 
-### Tableau de Bord de Calcul
+### Frontend Setup
 
-Accédez à **Outils > Marché du Calcul (P2P)** dans StoryCore pour :
+The frontend is a React + TypeScript + Tailwind dashboard that proxies API calls to the backend.
 
-* Monitorer les nodes en ligne.
-* Suivre les séquestres d'énergie (escrows).
-* Enregistrer votre propre station de calcul.
+1. Navigate to the frontend directory:
+
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server (proxies `/v1/*` to `localhost:8001`):
+
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Production Build
+
+```bash
+cd frontend && npm run build
+# Output: frontend/dist/ — serve with any static file server
+```
 
 ---
 *StoryCore Gem Protocol — Quantifying the Infinite Human Potential through Finite Machine Energy.*

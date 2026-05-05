@@ -1,10 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException, Header, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-import os
-from typing import List, Optional
+import asyncio
 from models import Base
 from engine import GemEngineStandalone
+from db.session import get_db, AsyncSessionLocal
 import api.webhooks as webhooks
 import api.gems as gems
 import api.apps as apps
@@ -46,14 +46,10 @@ async def root():
         "documentation": "/docs"
     }
 
-import asyncio
-from db.session import get_db
-
 async def worker_cleanup_loop():
     """Periodically check for offline workers."""
     while True:
         try:
-            from db.session import AsyncSessionLocal
             async with AsyncSessionLocal() as db:
                 engine = GemEngineStandalone(db)
                 cleaned = await engine.cleanup_offline_workers(threshold_seconds=60)
@@ -65,8 +61,34 @@ async def worker_cleanup_loop():
         await asyncio.sleep(30) # Check every 30 seconds
 
 @app.on_event("startup")
-async def start_cleanup_task():
-    asyncio.create_task(worker_cleanup_loop())
+async def startup():
+    logger.info("GemReward-Service starting up...")
+    from db.session import engine as db_engine
+    async with db_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    asyncio.create_task(_worker_cleanup_loop())
+
+@app.get("/")
+async def root():
+    return {
+        "service": "GemReward-Service",
+        "status": "active",
+        "version": "1.0.0",
+        "documentation": "/docs"
+    }
+
+async def _worker_cleanup_loop():
+    """Periodically mark workers as offline if no heartbeat received."""
+    while True:
+        try:
+            async with AsyncSessionLocal() as db:
+                engine = GemEngineStandalone(db)
+                cleaned = await engine.cleanup_offline_workers(threshold_seconds=60)
+                if cleaned > 0:
+                    logger.info(f"Cleaned up {cleaned} offline workers.")
+        except Exception as e:
+            logger.error(f"Error in worker cleanup loop: {e}")
+        await asyncio.sleep(30)
 
 # Include Routers
 app.include_router(webhooks.router, prefix="/v1/webhooks", tags=["Webhooks"])
