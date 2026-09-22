@@ -34,9 +34,9 @@ GemReward Service
 
 ## Projets liés
 
-- [hermes-brain](https://github.com/zedarvates/hermes-brain) — Architecture cognitive
-- [gardemanger](https://github.com/zedarvates/gardemanger) — Food autonomy system
-- [ElectroClaw](https://github.com/zedarvates/ElectroClaw) — Mesh multi-node
+- hermes-brain *(dépôt privé)* — Architecture cognitive
+- gardemanger *(dépôt privé)* — Food autonomy system
+- ElectroClaw *(dépôt privé)* — Mesh multi-node
 
 ## Licence MIT
 
